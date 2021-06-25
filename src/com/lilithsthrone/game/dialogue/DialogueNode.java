@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.lilithsthrone.utils.MutableInteger;
+import javafx.util.Pair;
 import org.w3c.dom.Document;
 
 import com.lilithsthrone.controller.xmlParsing.Element;
@@ -57,8 +59,17 @@ public abstract class DialogueNode {
 		this.continuesDialogue = continuesDialogue;
 	}
 
+	private static final int cacheLimit = 25;
+	private static final int cacheUseRange = 2;
+	private static Map<String, Pair<List<DialogueNode>, MutableInteger>> cachedDialogues; /* Stores the times accessed. If Max capacity is reached then the least accessed dialogues will be removed */
+
 	public static List<DialogueNode> loadDialogueNodesFromFile(String idPrefix, File XMLFile, String author, boolean mod) {
 		if (XMLFile.exists()) {
+			if(cachedDialogues.containsKey(XMLFile.getPath())){
+				Pair<List<DialogueNode>, MutableInteger> data = cachedDialogues.get(XMLFile.getPath());
+				data.getValue().inc();
+				return data.getKey();
+			}
 			List<DialogueNode> loadedNodes = new ArrayList<>();
 			
 			try {
@@ -621,7 +632,30 @@ public abstract class DialogueNode {
 					
 					loadedNodes.add(newNode);
 				}
-				
+
+				if(cachedDialogues.size() > cacheLimit){
+					List<String> removedEntries = new ArrayList<String>();
+					int curLow = -1;
+					for(Map.Entry<String, Pair<List<DialogueNode>, MutableInteger>> pair : cachedDialogues.entrySet()){
+						if(curLow == -1){
+							curLow = pair.getValue().getValue().value();
+							removedEntries.add(pair.getKey());
+							continue;
+						}
+						if(pair.getValue().getValue().value() < curLow){
+							curLow = pair.getValue().getValue().value();
+							removedEntries.clear();
+						}
+						if(pair.getValue().getValue().value() <= curLow+cacheUseRange){
+							removedEntries.add(pair.getKey());
+						}
+					}
+					for(String key : removedEntries){
+						cachedDialogues.remove(key);
+					}
+
+					cachedDialogues.put(XMLFile.getPath(), new Pair<>(loadedNodes, new MutableInteger(1)));
+				}
 				return loadedNodes;
 				
 			} catch(Exception ex) {
