@@ -254,6 +254,7 @@ public enum RenderingEngine {
 						+ "<div class='inventory-icon-content'>"+weaponInSlot.getSVGEquippedString(charactersInventoryToRender)+"</div>"
 						+ "<div class='overlay-inventory' id='" + InventorySlot.WEAPON_OFFHAND_1.toString() + "Slot'></div>"
 					+ "</div>");
+			equippedPanelSB.append((Main.getProperties().isWeaponDiscovered(weaponInSlot.getWeaponType()) ? "<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>" : ""));
 		} else if (charactersInventoryToRender.getMainWeapon(0) != null && charactersInventoryToRender.getMainWeapon(0).getWeaponType().isTwoHanded()) {
 			equippedPanelSB.append(getEmptyWeaponDiv(charactersInventoryToRender, true, InventorySlot.WEAPON_OFFHAND_1, weaponStyle));
 			
@@ -268,6 +269,7 @@ public enum RenderingEngine {
 							+ "<div class='inventory-icon-content'>"+weaponInSlot.getSVGEquippedString(charactersInventoryToRender)+"</div>"
 							+ "<div class='overlay-inventory' id='" + InventorySlot.WEAPON_OFFHAND_2.toString() + "Slot'></div>"
 						+ "</div>");
+				equippedPanelSB.append((Main.getProperties().isWeaponDiscovered(weaponInSlot.getWeaponType()) ? "<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>" : ""));
 			} else if (charactersInventoryToRender.getMainWeapon(1) != null && charactersInventoryToRender.getMainWeapon(1).getWeaponType().isTwoHanded()) {
 				equippedPanelSB.append(getEmptyWeaponDiv(charactersInventoryToRender, true, InventorySlot.WEAPON_OFFHAND_2, weaponStyle));
 				
@@ -280,6 +282,7 @@ public enum RenderingEngine {
 							+ "<div class='inventory-icon-content'>"+weaponInSlot.getSVGEquippedString(charactersInventoryToRender)+"</div>"
 							+ "<div class='overlay-inventory' id='" + InventorySlot.WEAPON_OFFHAND_3.toString() + "Slot'></div>"
 						+ "</div>");
+				equippedPanelSB.append((Main.getProperties().isWeaponDiscovered(weaponInSlot.getWeaponType()) ? "<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>" : ""));
 			} else if (charactersInventoryToRender.getArmRows()==2 || (charactersInventoryToRender.getMainWeapon(2) != null && charactersInventoryToRender.getMainWeapon(2).getWeaponType().isTwoHanded())) {
 				equippedPanelSB.append(getEmptyWeaponDiv(charactersInventoryToRender, true, InventorySlot.WEAPON_OFFHAND_3, weaponStyle));
 				
@@ -312,6 +315,7 @@ public enum RenderingEngine {
 						
 						equippedPanelSB.append((!clothing.getDisplacedList().isEmpty() ? "<div class='displacedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getDisplacedIcon() + "</div>" : ""));
 						equippedPanelSB.append((clothing.isDirty() ? "<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getDirtyIcon() + "</div>" : ""));
+						equippedPanelSB.append((Main.getProperties().isClothingDiscovered(clothing.getClothingType()) ? "<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>" : ""));
 						equippedPanelSB.append((clothing.getClothingType().getFemininityMaximum() < charactersInventoryToRender.getFemininityValue() ? "<div class='femininityIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getMasculineWarningIcon() + "</div>" : ""));
 						equippedPanelSB.append((clothing.getClothingType().getFemininityMinimum() > charactersInventoryToRender.getFemininityValue() ? "<div class='femininityIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getFeminineWarningIcon() + "</div>" : ""));
 						
@@ -482,9 +486,10 @@ public enum RenderingEngine {
 									:""));
 						
 						equippedPanelSB.append("<div class='inventory-icon-content'>"+clothing.getSVGEquippedString(charactersInventoryToRender)+"</div>");
-	
+
 						equippedPanelSB.append((!clothing.getDisplacedList().isEmpty() ? "<div class='displacedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getDisplacedIcon() + "</div>" : ""));
 						equippedPanelSB.append((clothing.isDirty() ? "<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getDirtyIcon() + "</div>" : ""));
+						equippedPanelSB.append((Main.getProperties().isClothingDiscovered(clothing.getClothingType()) ? "<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>" : ""));
 						equippedPanelSB.append((clothing.getClothingType().getFemininityMaximum() < charactersInventoryToRender.getFemininityValue() ? "<div class='femininityIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getMasculineWarningIcon() + "</div>" : ""));
 						equippedPanelSB.append((clothing.getClothingType().getFemininityMinimum() > charactersInventoryToRender.getFemininityValue() ? "<div class='femininityIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getFeminineWarningIcon() + "</div>" : ""));
 						
@@ -937,6 +942,14 @@ public enum RenderingEngine {
 
 		if (item instanceof AbstractClothing && ((AbstractClothing)item).isDirty()) {
 			itemSB.append("<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getDirtyIcon() + "</div>");
+		}else {
+			if (item instanceof AbstractClothing && !Main.getProperties().isClothingDiscovered(((AbstractClothing) item).getClothingType())) {
+				itemSB.append("<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>");
+			} else if (item instanceof AbstractWeapon && !Main.getProperties().isWeaponDiscovered(((AbstractWeapon) item).getWeaponType())) {
+				itemSB.append("<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>");
+			} else if (item instanceof AbstractItem && !Main.getProperties().isItemDiscovered(((AbstractItem) item).getItemType())) {
+				itemSB.append("<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>");
+			}
 		}
 		String overlay = "<div class='overlay";
 		String last_layer = "";
@@ -1006,6 +1019,14 @@ public enum RenderingEngine {
 
 		if (item instanceof AbstractClothing && ((AbstractClothing)item).isDirty()) {
 			itemSB.append("<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getDirtyIcon() + "</div>");
+		}else {
+			if (item instanceof AbstractClothing && !Main.getProperties().isClothingDiscovered(((AbstractClothing) item).getClothingType())) {
+				itemSB.append("<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>");
+			} else if (item instanceof AbstractWeapon && !Main.getProperties().isWeaponDiscovered(((AbstractWeapon) item).getWeaponType())) {
+				itemSB.append("<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>");
+			} else if (item instanceof AbstractItem && !Main.getProperties().isItemDiscovered(((AbstractItem) item).getItemType())) {
+				itemSB.append("<div class='cummedIcon'>" + SVGImages.SVG_IMAGE_PROVIDER.getAddIcon() + "</div>");
+			}
 		}
 		String overlay = "<div class='overlay";
 		String last_layer = "";
