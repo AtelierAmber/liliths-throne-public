@@ -61,7 +61,7 @@ public abstract class DialogueNode {
 
 	private static final int cacheLimit = 25;
 	private static final int cacheUseRange = 2;
-	private static Map<String, Pair<List<DialogueNode>, MutableInteger>> cachedDialogues; /* Stores the times accessed. If Max capacity is reached then the least accessed dialogues will be removed */
+	private static final Map<String, Pair<List<DialogueNode>, MutableInteger>> cachedDialogues = new HashMap<>(); /* Stores the times accessed. If Max capacity is reached then the least accessed dialogues will be removed */
 
 	public static List<DialogueNode> loadDialogueNodesFromFile(String idPrefix, File XMLFile, String author, boolean mod) {
 		if (XMLFile.exists()) {
